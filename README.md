@@ -18,6 +18,7 @@ lr.train(function(err) {
   // you can now start using lr.predict:
   console.log(lr.predict(1));
 });
+```
 
 ### Example
 
