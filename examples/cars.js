@@ -1,3 +1,6 @@
+// The data used for this example was pulled from
+// http://archive.ics.uci.edu/ml/datasets/Automobile
+
 var csvParse = require('csv-parse'),
     fs = require('fs'),
     LinearRegression = require('../index').LinearRegression,

@@ -1,3 +1,6 @@
+// the data used for this example was borrowed from the following site:
+// http://bl.ocks.org/tmcw/3931800/1bed6c10905952539000301086378c6ed1c75c84
+
 var csvParse = require('csv-parse'),
     fs = require('fs'),
     LinearRegression = require('../index').LinearRegression,
