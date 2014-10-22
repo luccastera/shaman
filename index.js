@@ -2,12 +2,22 @@
 
 var sylvester = require('sylvester'),
     Matrix = sylvester.Matrix,
-    Vector = sylvester.Vector;
+    Vector = sylvester.Vector,
+    _ = require('underscore');
 
 var LinearRegression = function(X, Y, options) {
   this.X = X || [];
   this.Y = Y || [];
   this.options = options || {};
+  this.trained = false;
+
+  if (this.options.algorithm === 'GradientDescent') {
+    this.algorithm = 'GradientDescent';
+  } else if (this.options.algorithm === 'NormalEquation') {
+    this.algorithm = 'NormalEquation';
+  } else {
+    this.algorithm = 'NormalEquation';
+  }
 
   // verify that X is an array
   if (X && !Array.isArray(X)) {
@@ -36,14 +46,23 @@ LinearRegression.prototype.train = function(callback) {
   // slope of 0 and a y-intercept of the y passed in
   if (this.X.length === 1) {
     this.theta = $M([0, this.Y[0]]);
+    this.trained = true;
     return callback();
   }
 
+  if (this.algorithm === 'GradientDescent') {
+    return this.trainWithGradientDescent(callback);
+  } else {
+    return this.trainWithNormalEquation(callback);
+  }
+};
+
+LinearRegression.prototype.trainWithNormalEquation = function(callback) {
   // Normal Equation using sylvester:
   // The x matrix for the normal equation needs to
   // have a row of ones as its first row.
   // Let's first build the x matrix
-  var zeros = Matrix.Zero(this.X.length,1)
+  var zeros = Matrix.Zero(this.X.length,1);
   var ones = zeros.add(1);
   var x = ones.augment($M(this.X));
   // Then build the y matrix
@@ -54,16 +73,72 @@ LinearRegression.prototype.train = function(callback) {
   var inversePortion = x.transpose().x(x).inverse();
   if (inversePortion) {
     this.theta = inversePortion.x(x.transpose()).x(y);
+    this.trained = true;
     return callback(); 
   } else {
     return callback(new Error('could not inverse the matrix in normal equation'));
   }
 };
 
+LinearRegression.computeCost = function(X, Y, theta) {
+  var m = Y.dimensions().rows;
+  var xThetaMinusYSquared = (X.x(theta)).subtract(Y).map(function(val) { return val * val; });
+  var xThetaMinusYArray = _.flatten(xThetaMinusYSquared.elements);
+  var sum = _.reduce(xThetaMinusYArray, function(memo, num) { return memo + num; }, 0);
+  return (1 / (2 * m)) * sum;
+};
+
+LinearRegression.gradientDescent = function(X, Y, theta, alpha, numberOfIterations) {
+  var m = Y.dimensions().rows;
+  for (var i = 0; i < numberOfIterations; i++) {
+    var xThetaMinusY = (X.x(theta)).subtract(Y);
+
+    var sum1Array = _.flatten(xThetaMinusY.elements);
+    var sum1 = _.reduce(sum1Array, function(memo, num) { return memo + num; }, 0);
+
+    var sum2Matrix = xThetaMinusY.transpose().x(X);
+    var sum2Array = _.flatten(sum2Matrix.elements);
+    var sum2 = _.reduce(sum2Array, function(memo, num) { return memo + num; }, 0);
+
+    var temp1 = theta.e(1,1) - (alpha / m) * sum1;
+    var temp2 = theta.e(2,1) - (alpha / m) * sum2;
+    theta = $M([[temp1], [temp2]]);
+    //console.log('cost', LinearRegression.computeCost(X, Y, theta));
+  }
+  return theta;
+};
+
+LinearRegression.prototype.trainWithGradientDescent = function(callback) {
+  var alpha = this.options.alpha || 0.1;
+  var numberOfIterations = this.options.numberOfIterations || 8500;
+
+  // initialize theta to zero
+  this.theta = Matrix.Zero(2, 1);
+
+  // The x matrix for the normal equation needs to
+  // have a row of ones as its first row.
+  // Let's first build the x matrix
+  var zeros = Matrix.Zero(this.X.length,1);
+  var ones = zeros.add(1);
+  var x = ones.augment($M(this.X));
+  // Then build the y matrix
+  var y = $M(this.Y);
+
+  var cost = LinearRegression.computeCost(x, y, this.theta);
+
+  this.theta = LinearRegression.gradientDescent(x, y, this.theta, alpha, numberOfIterations);
+  this.trained = true;
+  return callback(); 
+};
+
 LinearRegression.prototype.predict = function(input) {
-  var xInput = $M([1, input]);
-  var output = this.theta.transpose().x(xInput);
-  return output.e(1,1);
+  if (this.trained) {
+    var xInput = $M([1, input]);
+    var output = this.theta.transpose().x(xInput);
+    return output.e(1,1);
+  } else {
+    throw new Error('cannot predict before training');
+  }
 };
 
 exports.LinearRegression = LinearRegression;
