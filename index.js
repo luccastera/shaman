@@ -29,8 +29,7 @@ LinearRegression.prototype.train = function(callback) {
 
   // Normal Equation using sylvester:
   // The x matrix for the normal equation needs to
-  // have a row of ones at the beginning for the
-  // theta0 parameter.
+  // have a row of ones as its first row.
   // Let's first build the x matrix
   var zeros = Matrix.Zero(this.X.length,1)
   var ones = zeros.add(1);
