@@ -27,6 +27,18 @@ LinearRegression.prototype.train = function(callback) {
     return callback(new Error('Y is empty'));
   }
 
+  // verify that X and Y inputs have the same length
+  if (this.X.length !== this.Y.length) {
+    return callback(new Error('X and Y must be of the same length'));
+  }
+
+  // if there is only one point, let's just choose a
+  // slope of 0 and a y-intercept of the y passed in
+  if (this.X.length === 1) {
+    this.theta = $M([0, this.Y[0]]);
+    return callback();
+  }
+
   // Normal Equation using sylvester:
   // The x matrix for the normal equation needs to
   // have a row of ones as its first row.
@@ -39,8 +51,13 @@ LinearRegression.prototype.train = function(callback) {
 
   // now we can apply the normal equation:
   // see formula at http://upload.wikimedia.org/math/2/c/e/2ce21b8e24ea7509a3295c3acd2ae0ea.png
-  this.theta = x.transpose().x(x).inverse().x(x.transpose()).x(y);
-  return callback();
+  var inversePortion = x.transpose().x(x).inverse();
+  if (inversePortion) {
+    this.theta = inversePortion.x(x.transpose()).x(y);
+    return callback(); 
+  } else {
+    return callback(new Error('could not inverse the matrix in normal equation'));
+  }
 };
 
 LinearRegression.prototype.predict = function(input) {
