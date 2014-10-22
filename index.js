@@ -27,13 +27,19 @@ LinearRegression.prototype.train = function(callback) {
     return callback(new Error('Y is empty'));
   }
 
-  // normal equation using sylvester
-  var xWithOnes = [];
-  this.X.forEach(function(xi) {
-    xWithOnes.push([1, xi]);
-  });
-  var x = $M(xWithOnes);
+  // Normal Equation using sylvester:
+  // The x matrix for the normal equation needs to
+  // have a row of ones at the beginning for the
+  // theta0 parameter.
+  // Let's first build the x matrix
+  var zeros = Matrix.Zero(this.X.length,1)
+  var ones = zeros.add(1);
+  var x = ones.augment($M(this.X));
+  // Then build the y matrix
   var y = $M(this.Y);
+
+  // now we can apply the normal equation:
+  // see formula at http://upload.wikimedia.org/math/2/c/e/2ce21b8e24ea7509a3295c3acd2ae0ea.png
   this.theta = x.transpose().x(x).inverse().x(x.transpose()).x(y);
   return callback();
 };
