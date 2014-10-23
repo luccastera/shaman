@@ -88,7 +88,7 @@ LinearRegression.computeCost = function(X, Y, theta) {
   return (1 / (2 * m)) * sum;
 };
 
-LinearRegression.gradientDescent = function(X, Y, theta, alpha, numberOfIterations) {
+LinearRegression.gradientDescent = function(X, Y, theta, learningRate, numberOfIterations) {
   var m = Y.dimensions().rows;
   for (var i = 0; i < numberOfIterations; i++) {
     var xThetaMinusY = (X.x(theta)).subtract(Y);
@@ -100,8 +100,8 @@ LinearRegression.gradientDescent = function(X, Y, theta, alpha, numberOfIteratio
     var sum2Array = _.flatten(sum2Matrix.elements);
     var sum2 = _.reduce(sum2Array, function(memo, num) { return memo + num; }, 0);
 
-    var temp1 = theta.e(1,1) - (alpha / m) * sum1;
-    var temp2 = theta.e(2,1) - (alpha / m) * sum2;
+    var temp1 = theta.e(1,1) - (learningRate / m) * sum1;
+    var temp2 = theta.e(2,1) - (learningRate / m) * sum2;
     theta = $M([[temp1], [temp2]]);
     //console.log('cost', LinearRegression.computeCost(X, Y, theta));
   }
@@ -109,7 +109,7 @@ LinearRegression.gradientDescent = function(X, Y, theta, alpha, numberOfIteratio
 };
 
 LinearRegression.prototype.trainWithGradientDescent = function(callback) {
-  var alpha = this.options.alpha || 0.1;
+  var learningRate = this.options.learningRate || 0.1;
   var numberOfIterations = this.options.numberOfIterations || 8500;
 
   // initialize theta to zero
@@ -126,7 +126,7 @@ LinearRegression.prototype.trainWithGradientDescent = function(callback) {
 
   var cost = LinearRegression.computeCost(x, y, this.theta);
 
-  this.theta = LinearRegression.gradientDescent(x, y, this.theta, alpha, numberOfIterations);
+  this.theta = LinearRegression.gradientDescent(x, y, this.theta, learningRate, numberOfIterations);
   this.trained = true;
   return callback(); 
 };
