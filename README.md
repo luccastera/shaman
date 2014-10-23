@@ -20,6 +20,8 @@ lr.train(function(err) {
 });
 ```
 
+See how to use with Gradient Descent algorithm [here](examples/usage-gd.js).
+
 ### Examples
 
 [Click here](https://plot.ly/~luccastera/2) to see an example of Simple Linear Regression
@@ -30,3 +32,8 @@ library (code is in [examples/cars.js](examples/cars.js)).
 example of Simple Linear Regression applies to the stock price of AAPL
 from 2008 to 20012. Code can be seen at
 [examples/stock.js](examples/stock.js).
+
+
+### License
+
+[MIT](LICENSE)
