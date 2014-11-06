@@ -57,15 +57,19 @@ LinearRegression.prototype.train = function(callback) {
   }
 };
 
-LinearRegression.prototype.trainWithNormalEquation = function(callback) {
-  // Normal Equation using sylvester:
+LinearRegression.addColumnOne = function(X) {
   // The x matrix for the normal equation needs to
   // have a row of ones as its first row.
   // Let's first build the x matrix
-  var zeros = Matrix.Zero(this.X.length,1);
+  var zeros = Matrix.Zero(X.length,1);
   var ones = zeros.add(1);
-  var x = ones.augment($M(this.X));
-  // Then build the y matrix
+  var x = ones.augment($M(X));
+  return x;
+};
+
+LinearRegression.prototype.trainWithNormalEquation = function(callback) {
+  var x = LinearRegression.addColumnOne(this.X);
+  // Build the y matrix
   var y = $M(this.Y);
 
   // now we can apply the normal equation:
@@ -115,13 +119,9 @@ LinearRegression.prototype.trainWithGradientDescent = function(callback) {
   // initialize theta to zero
   this.theta = Matrix.Zero(2, 1);
 
-  // The x matrix for the normal equation needs to
-  // have a row of ones as its first row.
-  // Let's first build the x matrix
-  var zeros = Matrix.Zero(this.X.length,1);
-  var ones = zeros.add(1);
-  var x = ones.augment($M(this.X));
-  // Then build the y matrix
+  var x = LinearRegression.addColumnOne(this.X);
+
+  // Build the y matrix
   var y = $M(this.Y);
 
   var cost = LinearRegression.computeCost(x, y, this.theta);
