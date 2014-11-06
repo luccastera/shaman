@@ -80,59 +80,64 @@ describe('LinearRegresssion', function() {
   });
 
   function predictionTests() {
-    it('should correctly generates a line for a 0,0 to 1,1 dataset (slope of 1)', function(done) {
-      var lr = new LinearRegression([0, 1], [0,1], fixtures.options);
-      lr.train(function(err) {
-        assert.ok(lr.predict(0) - 0 < EPSILON);
-        assert.ok(lr.predict(0.5) -  0.5 < EPSILON);
-        assert.ok(lr.predict(1) - 1 < EPSILON);
-        done();
+    describe('simple linear regression', function() {
+      it('should correctly generates a line for a 0,0 to 1,1 dataset (slope of 1)', function(done) {
+        var lr = new LinearRegression([0, 1], [0,1], fixtures.options);
+        lr.train(function(err) {
+          assert.ok(lr.predict(0) - 0 < EPSILON);
+          assert.ok(lr.predict(0.5) -  0.5 < EPSILON);
+          assert.ok(lr.predict(1) - 1 < EPSILON);
+          done();
+        });
+      });
+      it('should correctly generates a line for a (0,0) to (1,0) dataset (horizontal line)', function(done) {
+        var lr = new LinearRegression([0, 1], [0,0], fixtures.options);
+        lr.train(function(err) {
+          assert.equal(lr.predict(0), 0);
+          assert.equal(lr.predict(0.5), 0);
+          assert.equal(lr.predict(1), 0);
+          done();
+        });
+      });
+      it('should correctly generates a line for a (0,5) to (1,5) dataset (horizontal line)', function(done) {
+        var lr = new LinearRegression([0, 1], [5,5], fixtures.options);
+        lr.train(function(err) {
+          assert.ok(lr.predict(0) - 5 < EPSILON);
+          assert.ok(lr.predict(0.5) - 5 < EPSILON);
+          assert.ok(lr.predict(1) - 5 < EPSILON);
+          done();
+        });
+      });
+      it('should handle single point input of (0,0)', function(done) {
+        var lr = new LinearRegression([0], [0], fixtures.options);
+        lr.train(function(err) {
+          assert.equal(lr.predict(10), 0);
+          done();
+        });
+      });
+      it('should handle a single point example by returning y-intercept', function(done) {
+        var lr = new LinearRegression([0], [1], fixtures.options);
+        lr.train(function(err) {
+          assert.equal(lr.predict(5), 5);
+          done();
+        });
+      });
+      it('should predict a simple example correctly', function(done) {
+        var lr = new LinearRegression([1, 2, 3, 4, 5], [2, 2, 3, 3, 5], fixtures.options);
+        lr.train(function(err) {
+          assert.ok(lr.predict(0) - 0.899 < EPSILON);
+          assert.ok(lr.predict(1) - 1.599 < EPSILON);
+          assert.ok(lr.predict(2) - 2.3 < EPSILON);
+          assert.ok(lr.predict(3) - 2.999 < EPSILON);
+          assert.ok(lr.predict(4) - 3.699 < EPSILON);
+          assert.ok(lr.predict(5) - 4.4 < EPSILON);
+          assert.ok(lr.predict(10) - 7.9 < EPSILON);
+          done();
+        });
       });
     });
-    it('should correctly generates a line for a (0,0) to (1,0) dataset (horizontal line)', function(done) {
-      var lr = new LinearRegression([0, 1], [0,0], fixtures.options);
-      lr.train(function(err) {
-        assert.equal(lr.predict(0), 0);
-        assert.equal(lr.predict(0.5), 0);
-        assert.equal(lr.predict(1), 0);
-        done();
-      });
-    });
-    it('should correctly generates a line for a (0,5) to (1,5) dataset (horizontal line)', function(done) {
-      var lr = new LinearRegression([0, 1], [5,5], fixtures.options);
-      lr.train(function(err) {
-        assert.ok(lr.predict(0) - 5 < EPSILON);
-        assert.ok(lr.predict(0.5) - 5 < EPSILON);
-        assert.ok(lr.predict(1) - 5 < EPSILON);
-        done();
-      });
-    });
-    it('should handle single point input of (0,0)', function(done) {
-      var lr = new LinearRegression([0], [0], fixtures.options);
-      lr.train(function(err) {
-        assert.equal(lr.predict(10), 0);
-        done();
-      });
-    });
-    it('should handle a single point example by returning y-intercept', function(done) {
-      var lr = new LinearRegression([0], [1], fixtures.options);
-      lr.train(function(err) {
-        assert.equal(lr.predict(5), 5);
-        done();
-      });
-    });
-    it('should predict a simple example correctly', function(done) {
-      var lr = new LinearRegression([1, 2, 3, 4, 5], [2, 2, 3, 3, 5], fixtures.options);
-      lr.train(function(err) {
-        assert.ok(lr.predict(0) - 0.899 < EPSILON);
-        assert.ok(lr.predict(1) - 1.599 < EPSILON);
-        assert.ok(lr.predict(2) - 2.3 < EPSILON);
-        assert.ok(lr.predict(3) - 2.999 < EPSILON);
-        assert.ok(lr.predict(4) - 3.699 < EPSILON);
-        assert.ok(lr.predict(5) - 4.4 < EPSILON);
-        assert.ok(lr.predict(10) - 7.9 < EPSILON);
-        done();
-      });
+    describe('multiple linear regression', function() {
+      it('should predict a simple example correctly');
     });
   }
 
@@ -173,6 +178,18 @@ describe('LinearRegresssion', function() {
         return callback();
       });
       predictionTests();
+      describe('multiple linear regression', function() {
+        it('should correctly generates a line for a [0,0] -> 0 and [1,1]  -> 1 dataset', function(done) {
+          var lr = new LinearRegression([[0,0], [1,1]], [0,1], fixtures.options);
+          lr.train(function(err) {
+            assert.ok(!err, err);
+            assert.ok(lr.predict([0,0]) - 0 < EPSILON);
+            assert.ok(lr.predict([0.5,0.5]) -  0.5 < EPSILON);
+            assert.ok(lr.predict([1,1]) - 1 < EPSILON);
+            done();
+          });
+        });
+      });
     });
   });
 });

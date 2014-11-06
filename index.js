@@ -78,7 +78,7 @@ LinearRegression.prototype.trainWithNormalEquation = function(callback) {
   if (inversePortion) {
     this.theta = inversePortion.x(x.transpose()).x(y);
     this.trained = true;
-    return callback(); 
+    return callback();
   } else {
     return callback(new Error('could not inverse the matrix in normal equation'));
   }
@@ -94,19 +94,22 @@ LinearRegression.computeCost = function(X, Y, theta) {
 
 LinearRegression.gradientDescent = function(X, Y, theta, learningRate, numberOfIterations) {
   var m = Y.dimensions().rows;
+  var nbrOfFeatures = X.dimensions().cols;
+
   for (var i = 0; i < numberOfIterations; i++) {
     var xThetaMinusY = (X.x(theta)).subtract(Y);
+    var sums = [];
+    var tempArray = [];
 
-    var sum1Array = _.flatten(xThetaMinusY.elements);
-    var sum1 = _.reduce(sum1Array, function(memo, num) { return memo + num; }, 0);
+    for (var j = 1; j <= nbrOfFeatures; j++) {
+      var xThetaMinusYTimesXj = xThetaMinusY.transpose().x(X.column(j));
+      var arrayToSum = _.flatten(xThetaMinusYTimesXj.elements);
+      var sum = _.reduce(arrayToSum, function(memo, num) { return memo + num; }, 0);
 
-    var sum2Matrix = xThetaMinusY.transpose().x(X);
-    var sum2Array = _.flatten(sum2Matrix.elements);
-    var sum2 = _.reduce(sum2Array, function(memo, num) { return memo + num; }, 0);
-
-    var temp1 = theta.e(1,1) - (learningRate / m) * sum1;
-    var temp2 = theta.e(2,1) - (learningRate / m) * sum2;
-    theta = $M([[temp1], [temp2]]);
+      var temp = theta.e(j,1) - (learningRate / m) * sum;
+      tempArray.push([temp]);
+    }
+    theta = $M(tempArray);
     //console.log('cost', LinearRegression.computeCost(X, Y, theta));
   }
   return theta;
@@ -116,13 +119,15 @@ LinearRegression.prototype.trainWithGradientDescent = function(callback) {
   var learningRate = this.options.learningRate || 0.1;
   var numberOfIterations = this.options.numberOfIterations || 8500;
 
-  // initialize theta to zero
-  this.theta = Matrix.Zero(2, 1);
-
+  // build the matrix of input features
   var x = LinearRegression.addColumnOne(this.X);
+  var nbrOfFeatures = x.dimensions().cols;
 
   // Build the y matrix
   var y = $M(this.Y);
+
+  // initialize theta to zero
+  this.theta = Matrix.Zero(nbrOfFeatures, 1);
 
   var cost = LinearRegression.computeCost(x, y, this.theta);
 
@@ -133,7 +138,10 @@ LinearRegression.prototype.trainWithGradientDescent = function(callback) {
 
 LinearRegression.prototype.predict = function(input) {
   if (this.trained) {
-    var xInput = $M([1, input]);
+    if (!Array.isArray(input)) {
+      input = [input];
+    }
+    var xInput = $V([1]).augment(input);
     var output = this.theta.transpose().x(xInput);
     return output.e(1,1);
   } else {
