@@ -2,7 +2,7 @@
   "name": "shaman",
   "description": "Machine Learning library for node.js",
   "keywords": ["machine learning", "linear regression", "statistics", "gradient descent algorithm"],
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "Luc Castera <luc.castera@gmail.com>",
   "license": "MIT",
   "repository": {
