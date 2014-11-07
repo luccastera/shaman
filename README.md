@@ -4,7 +4,13 @@ Machine Learning library for node.js
 
 ## Linear Regression
 
-Linear Regression is implemented using linear algebra and the normal equation.
+shaman supports [both simple linear regression  and multiple linear
+regression](http://en.wikipedia.org/wiki/Linear_regression#Simple_and_multiple_regression).
+
+It supports two different algorithms to train the model:
+
+0. [The Normal Equation](http://en.wikipedia.org/wiki/Linear_least_squares_(mathematics))
+1. [The Gradient Descent Algorithm](http://en.wikipedia.org/wiki/Gradient_descent)
 
 ### Usage
 
