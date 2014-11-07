@@ -1,14 +1,19 @@
 {
   "name": "shaman",
   "description": "Machine Learning library for node.js",
+  "version": "0.1.0",
   "keywords": [
     "machine learning",
     "linear regression",
     "statistics",
     "gradient descent algorithm"
   ],
-  "version": "0.1.0",
-  "author": "Luc Castera <luc.castera@gmail.com>",
+  "homepage": "https://github.com/dambalah/shaman",
+  "author": {
+    "name": "Luc Castera",
+    "email": "luc.castera@gmail.com",
+    "url": "http://luccastera.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -16,7 +21,8 @@
   },
   "main": "index.js",
   "dependencies": {
-    "sylvester": "0.0.21"
+    "sylvester": "0.0.21",
+    "underscore": "1.7.0"
   },
   "devDependencies": {
     "mocha": "1.21.5",
@@ -26,6 +32,8 @@
     "underscore": "1.7.0",
     "sinon": "1.10.3"
   },
+  "browserDependencies": {
+  },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha -R spec spec.js",
     "jshint": "./node_modules/jshint/bin/jshint index.js spec.js"
@@ -33,7 +41,6 @@
   "bugs": {
     "url": "https://github.com/dambalah/shaman/issues"
   },
-  "homepage": "https://github.com/dambalah/shaman",
   "directories": {
     "example": "examples"
   }
