@@ -50,8 +50,10 @@ describe('LinearRegresssion', function() {
 
   describe('normalize', function() {
     it('should normalize features correctly', function(done) {
-      var X = LinearRegression.addColumnOne([[10, 2], [15,2], [20, 2]]);
-      var normalizedX = LinearRegression.normalize(X);
+      var features = [[10, 2], [15,2], [20, 2]];
+      var lr = new LinearRegression(features, [2,4,5]);
+      var X = LinearRegression.addColumnOne(features);
+      var normalizedX = lr.normalize(X);
       assert.equal(1, normalizedX.e(1,1));
       assert.equal(1, normalizedX.e(2,1));
       assert.equal(1, normalizedX.e(3,1));

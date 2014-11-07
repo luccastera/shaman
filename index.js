@@ -10,6 +10,7 @@ var LinearRegression = function(X, Y, options) {
   this.Y = Y || [];
   this.options = options || {};
   this.trained = false;
+  this.normalized = false;
 
   if (this.options.algorithm === 'GradientDescent') {
     this.algorithm = 'GradientDescent';
@@ -74,17 +75,21 @@ function getMinOfArray(numArray) {
     return Math.min.apply(null, numArray);
 }
 
-LinearRegression.normalize = function(X) {
+LinearRegression.prototype.normalize = function(X) {
   var nbrOfFeatures = X.dimensions().cols;
   var m = X.dimensions().rows;
   var newX = Matrix.Zero(X.dimensions().rows,1).add(1);
+  this.means = [];
+  this.ranges = [];
   for (var i = 2; i <= nbrOfFeatures; i++) {
     var feature = X.column(i);
     var sum = _.reduce(feature.elements, function(memo, num) { return memo + num; }, 0);
     var mean = sum / m;
+    this.means.push(mean);
     var featureArray = feature.elements;
     var range = getMaxOfArray(featureArray) - getMinOfArray(featureArray);
     var normalizedFeature;
+    this.ranges.push(range);
     if (range === 0) {
       normalizedFeature = feature.subtract(mean);
     } else {
@@ -120,16 +125,18 @@ LinearRegression.computeCost = function(X, Y, theta) {
   return (1 / (2 * m)) * sum;
 };
 
-LinearRegression.gradientDescent = function(X, Y, theta, learningRate, numberOfIterations) {
+LinearRegression.prototype.gradientDescent = function(X, Y, theta, learningRate, numberOfIterations) {
   var m = Y.dimensions().rows;
   var nbrOfFeatures = X.dimensions().cols;
 
+  var normalizedX = this.normalize(X);
+
   for (var i = 0; i < numberOfIterations; i++) {
-    var xThetaMinusY = (X.x(theta)).subtract(Y);
+    var xThetaMinusY = (normalizedX.x(theta)).subtract(Y);
     var tempArray = [];
 
     for (var j = 1; j <= nbrOfFeatures; j++) {
-      var xThetaMinusYTimesXj = xThetaMinusY.transpose().x(X.column(j));
+      var xThetaMinusYTimesXj = xThetaMinusY.transpose().x(normalizedX.column(j));
       var arrayToSum = _.flatten(xThetaMinusYTimesXj.elements);
       var sum = _.reduce(arrayToSum, function(memo, num) { return memo + num; }, 0);
 
@@ -137,7 +144,7 @@ LinearRegression.gradientDescent = function(X, Y, theta, learningRate, numberOfI
       tempArray.push([temp]);
     }
     theta = $M(tempArray);
-    //console.log('cost', LinearRegression.computeCost(X, Y, theta));
+    //console.log('cost', LinearRegression.computeCost(normalizedX, Y, theta));
   }
   return theta;
 };
@@ -156,18 +163,25 @@ LinearRegression.prototype.trainWithGradientDescent = function(callback) {
   // initialize theta to zero
   this.theta = Matrix.Zero(nbrOfFeatures, 1);
 
-  this.theta = LinearRegression.gradientDescent(x, y, this.theta, learningRate, numberOfIterations);
+  this.theta = this.gradientDescent(x, y, this.theta, learningRate, numberOfIterations);
+  this.normalized = true;
   this.trained = true;
   return callback(); 
 };
 
 LinearRegression.prototype.predict = function(input) {
-  if (this.trained) {
+  var self = this;
+  if (self.trained) {
     if (!Array.isArray(input)) {
       input = [input];
     }
+
+    if (self.normalized) {
+      input = input.map(function(val, index) { return (val - self.means[index]) / self.ranges[index]; });
+    }
+
     var xInput = $V([1]).augment(input);
-    var output = this.theta.transpose().x(xInput);
+    var output = self.theta.transpose().x(xInput);
     return output.e(1,1);
   } else {
     throw new Error('cannot predict before training');
