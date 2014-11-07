@@ -68,25 +68,34 @@ lr.train(function(err) {
 });
 ```
 
-
-See how to use with Gradient Descent algorithm [here](examples/usage-gd.js).
-
 ### Examples
 
-[Click here](https://plot.ly/~luccastera/2) to see an example of Simple Linear Regression
+
+#### Simple Linear Regression - Cars
+
+[Below](https://plot.ly/~luccastera/2) to see an example of Simple Linear Regression
 using the Normal Equation to evaluate the price of cars based on their horsepower that was done with the shaman
 library. Code is in [examples/cars.js](examples/cars.js)).
 
-[Click here](https://plot.ly/~luccastera/3/aapl-stock-prices/) to see an
+![Cars Example](examples/cars.png)
+
+#### Simple Linear Regression - AAPL Stock Price
+
+[Below](https://plot.ly/~luccastera/3/aapl-stock-prices/) to see an
 example of Simple Linear Regression applies to the stock price of AAPL
 using the Gradient Descent algorithm from 2008 to 2012. Code can be seen at
 [examples/stock.js](examples/stock.js).
 
-[Click here](https://plot.ly/~luccastera/4/cigarettes/) to see an
-exmaple of Multiple Linear Regression to evaluate Carbon Monoxide in
+![Stock Example](examples/stock.png)
+
+#### Multiple Linear Regression - Cigarettes
+
+[Below](https://plot.ly/~luccastera/4/cigarettes/) to see an
+example of Multiple Linear Regression to evaluate Carbon Monoxide in
 cigarettes from nicotine and tar content. Code can be seen at
 [examples/cigarettes.js](examples/cigarettes.js).
 
+![Cigarettes Example](examples/cigarettes.png)
 
 ### License
 
