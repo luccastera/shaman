@@ -67,6 +67,34 @@ LinearRegression.addColumnOne = function(X) {
   return x;
 };
 
+function getMaxOfArray(numArray) {
+    return Math.max.apply(null, numArray);
+}
+function getMinOfArray(numArray) {
+    return Math.min.apply(null, numArray);
+}
+
+LinearRegression.normalize = function(X) {
+  var nbrOfFeatures = X.dimensions().cols;
+  var m = X.dimensions().rows;
+  var newX = Matrix.Zero(X.dimensions().rows,1).add(1);
+  for (var i = 2; i <= nbrOfFeatures; i++) {
+    var feature = X.column(i);
+    var sum = _.reduce(feature.elements, function(memo, num) { return memo + num; }, 0);
+    var mean = sum / m;
+    var featureArray = feature.elements;
+    var range = getMaxOfArray(featureArray) - getMinOfArray(featureArray);
+    var normalizedFeature;
+    if (range === 0) {
+      normalizedFeature = feature.subtract(mean);
+    } else {
+      normalizedFeature = feature.subtract(mean).multiply(1 / range);
+    }
+    newX = newX.augment(normalizedFeature);
+  }
+  return newX;
+};
+
 LinearRegression.prototype.trainWithNormalEquation = function(callback) {
   var x = LinearRegression.addColumnOne(this.X);
   // Build the y matrix

@@ -34,6 +34,37 @@ describe('LinearRegresssion', function() {
     });
   });
 
+  describe('addColumnOne', function() {
+    it('should append a column on all 1 in front of the matrix', function(done) {
+      var X = [[4,5], [6,7]];
+      var newX = LinearRegression.addColumnOne(X);
+      assert.equal(1, newX.e(1,1));
+      assert.equal(1, newX.e(2,1));
+      assert.equal(4, newX.e(1,2));
+      assert.equal(5, newX.e(1,3));
+      assert.equal(6, newX.e(2,2));
+      assert.equal(7, newX.e(2,3));
+      done();
+    });
+  });
+
+  describe('normalize', function() {
+    it('should normalize features correctly', function(done) {
+      var X = LinearRegression.addColumnOne([[10, 2], [15,2], [20, 2]]);
+      var normalizedX = LinearRegression.normalize(X);
+      assert.equal(1, normalizedX.e(1,1));
+      assert.equal(1, normalizedX.e(2,1));
+      assert.equal(1, normalizedX.e(3,1));
+      assert.equal(-0.5, normalizedX.e(1,2));
+      assert.equal(0, normalizedX.e(2,2));
+      assert.equal(0.5, normalizedX.e(3,2));
+      assert.equal(-0, normalizedX.e(1,3));
+      assert.equal(0, normalizedX.e(2,3));
+      assert.equal(0, normalizedX.e(3,3));
+      done();
+    });
+  });
+
   describe('train', function() {
     it('should throw an error if there is no data in X', function(done) {
       var lr = new LinearRegression();
