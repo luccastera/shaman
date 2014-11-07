@@ -68,6 +68,20 @@ lr.train(function(err) {
 });
 ```
 
+If you are troubleshooting, you can pass in a debug option (set to
+true). Shaman will then debug useful info in the console (such as the
+cost at every iteration of the Gradient Descent algorithem).
+
+```javascript
+var lr = new LinearRegression(X,Y, {
+  algorithm: 'GradientDescent',
+  debug: true // defaults to false
+});
+lr.train(function(err) {
+  // will console.log some useful info
+});
+```
+
 ### Examples
 
 

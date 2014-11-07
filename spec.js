@@ -96,7 +96,7 @@ describe('LinearRegresssion', function() {
       var lr = new LinearRegression([0, 0], [1,0]);
       lr.train(function(err) {
         assert.ok(err);
-        assert.equal(err.message, 'could not inverse the matrix in normal equation');
+        assert.equal(err.message, 'could not inverse the matrix in normal equation. Try to use Gradient Descent instead.');
         done();
       });
     });

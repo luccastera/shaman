@@ -8,10 +8,9 @@ var sylvester = require('sylvester'),
 var LinearRegression = function(X, Y, options) {
   this.X = X || [];
   this.Y = Y || [];
-  this.options = options || {};
-  this.trained = false;
-  this.normalized = false;
 
+  // Setup options
+  this.options = options || {};
   if (this.options.algorithm === 'GradientDescent') {
     this.algorithm = 'GradientDescent';
     this.saveCosts = options.saveCosts || false;
@@ -21,6 +20,12 @@ var LinearRegression = function(X, Y, options) {
   } else {
     this.algorithm = 'NormalEquation';
   }
+
+  this.debug = this.options.debug || false;
+
+  // initialize some attributes used by LinearRegression
+  this.trained = false;
+  this.normalized = false;
 
   // verify that X is an array
   if (X && !Array.isArray(X)) {
@@ -78,6 +83,9 @@ function getMinOfArray(numArray) {
 }
 
 LinearRegression.prototype.normalize = function(X) {
+  if (this.debug) {
+    console.log('Normalizing features...');
+  }
   var nbrOfFeatures = X.dimensions().cols;
   var m = X.dimensions().rows;
   var newX = Matrix.Zero(X.dimensions().rows,1).add(1);
@@ -103,6 +111,9 @@ LinearRegression.prototype.normalize = function(X) {
 };
 
 LinearRegression.prototype.trainWithNormalEquation = function(callback) {
+  if (this.debug) {
+    console.log('Training with Normal Equation...');
+  }
   var x = LinearRegression.addColumnOne(this.X);
   // Build the y matrix
   var y = $M(this.Y);
@@ -115,7 +126,10 @@ LinearRegression.prototype.trainWithNormalEquation = function(callback) {
     this.trained = true;
     return callback();
   } else {
-    return callback(new Error('could not inverse the matrix in normal equation'));
+    if (this.debug) {
+      console.log('  shaman could not inverse the matrix. Try to use Gradient Descent instead.');
+    }
+    return callback(new Error('could not inverse the matrix in normal equation. Try to use Gradient Descent instead.'));
   }
 };
 
@@ -149,7 +163,9 @@ LinearRegression.prototype.gradientDescent = function(X, Y, theta, learningRate,
     if (this.saveCosts) {
       this.costs.push(LinearRegression.computeCost(normalizedX, Y, theta));
     }
-    //console.log('cost', LinearRegression.computeCost(normalizedX, Y, theta));
+    if (this.debug) {
+      console.log('Iteration: ', i ,' -> Cost:', LinearRegression.computeCost(normalizedX, Y, theta));
+    }
   }
   return theta;
 };
@@ -157,6 +173,12 @@ LinearRegression.prototype.gradientDescent = function(X, Y, theta, learningRate,
 LinearRegression.prototype.trainWithGradientDescent = function(callback) {
   var learningRate = this.options.learningRate || 0.1;
   var numberOfIterations = this.options.numberOfIterations || 8500;
+
+  if (this.debug) {
+    console.log('Training with Normal Equation...');
+    console.log('  Learning Rate = ', learningRate);
+    console.log('  Number of Iterations', numberOfIterations);
+  }
 
   // build the matrix of input features
   var x = LinearRegression.addColumnOne(this.X);
