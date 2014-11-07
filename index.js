@@ -156,8 +156,6 @@ LinearRegression.prototype.trainWithGradientDescent = function(callback) {
   // initialize theta to zero
   this.theta = Matrix.Zero(nbrOfFeatures, 1);
 
-  var cost = LinearRegression.computeCost(x, y, this.theta);
-
   this.theta = LinearRegression.gradientDescent(x, y, this.theta, learningRate, numberOfIterations);
   this.trained = true;
   return callback(); 
