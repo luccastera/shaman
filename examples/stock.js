@@ -32,7 +32,7 @@ fs.readFile('./examples/stock.tsv', 'utf8', function(err, dataStr) {
 
 
     // Initialize and train the linear regression
-    var lr = new LinearRegression(x, y);
+    var lr = new LinearRegression(x, y, {algorithm: 'GradientDescent', learningRate: 0.1, numberOfIterations: 5000});
     lr.train(function(err) {
       if (err) {
         console.log('error', err);
