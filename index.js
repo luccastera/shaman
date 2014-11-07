@@ -14,6 +14,8 @@ var LinearRegression = function(X, Y, options) {
 
   if (this.options.algorithm === 'GradientDescent') {
     this.algorithm = 'GradientDescent';
+    this.saveCostFunction = options.saveCostFunction || false;
+    this.costs = [];
   } else if (this.options.algorithm === 'NormalEquation') {
     this.algorithm = 'NormalEquation';
   } else {
@@ -144,6 +146,9 @@ LinearRegression.prototype.gradientDescent = function(X, Y, theta, learningRate,
       tempArray.push([temp]);
     }
     theta = $M(tempArray);
+    if (this.saveCostFunction) {
+      this.costs.push(LinearRegression.computeCost(normalizedX, Y, theta));
+    }
     //console.log('cost', LinearRegression.computeCost(normalizedX, Y, theta));
   }
   return theta;

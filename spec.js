@@ -100,6 +100,28 @@ describe('LinearRegresssion', function() {
         done();
       });
     });
+    it('should not save cost function if we are using Normal Equation', function(done) {
+      var lr = new LinearRegression([0,1,2,3,4,5,6,7], [0,2,4,3,7,6,8,9], {algorithm: 'NormalEquation'});
+      lr.train(function(err) {
+        assert.ok(!err);
+        assert.ok(!lr.costs);
+        done();
+      });
+    });
+    it('should save cost function if using Gradient Descent and asked to do so', function(done) {
+      var lr = new LinearRegression([0,1,2,3,4,5,6,7], [0,2,4,3,7,6,8,9], {
+        algorithm: 'GradientDescent',
+        saveCostFunction: true,
+        learningRate: 0.1,
+        numberOfIterations: 100
+      });
+      lr.train(function(err) {
+        assert.ok(!err);
+        assert.ok(lr.costs);
+        assert.equal(lr.costs.length, 100);
+        done();
+      });
+    });
   });
 
   describe('predict', function() {
