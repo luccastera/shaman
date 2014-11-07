@@ -86,9 +86,9 @@ LinearRegression.prototype.trainWithNormalEquation = function(callback) {
 
 LinearRegression.computeCost = function(X, Y, theta) {
   var m = Y.dimensions().rows;
-  var xThetaMinusYSquared = (X.x(theta)).subtract(Y).map(function(val) { return val * val; });
-  var xThetaMinusYArray = _.flatten(xThetaMinusYSquared.elements);
-  var sum = _.reduce(xThetaMinusYArray, function(memo, num) { return memo + num; }, 0);
+  var xThetaMinusY = (X.x(theta)).subtract(Y);
+  var xThetaMinusYSquared = _.flatten(xThetaMinusY.elements).map(function(val) { return val * val; });
+  var sum = _.reduce(xThetaMinusYSquared, function(memo, num) { return memo + num; }, 0);
   return (1 / (2 * m)) * sum;
 };
 
@@ -98,7 +98,6 @@ LinearRegression.gradientDescent = function(X, Y, theta, learningRate, numberOfI
 
   for (var i = 0; i < numberOfIterations; i++) {
     var xThetaMinusY = (X.x(theta)).subtract(Y);
-    var sums = [];
     var tempArray = [];
 
     for (var j = 1; j <= nbrOfFeatures; j++) {
