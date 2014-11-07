@@ -34,8 +34,6 @@ fs.readFile('./examples/cigarettes.dat', 'utf8', function(err, dataStr) {
         y2.push(lr.predict(xi));
       });
 
-      console.log(y2);
-
       // let's create vars to plot
       var x1 = X.map(function(item) { return item[0]; });
       var x2 = X.map(function(item) { return item[1]; });
