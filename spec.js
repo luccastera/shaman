@@ -2,6 +2,7 @@
 
 var LinearRegression = require('./index').LinearRegression,
     assert = require('assert'),
+    euclideanDistance = require('./index').euclideanDistance,
     sinon = require('sinon');
 
 var fixtures = {};
@@ -246,5 +247,20 @@ describe('LinearRegresssion', function() {
         });
       });
     });
+  });
+});
+
+describe('Euclidean Distance', function() {
+  it('the euclidean distance between two identical vectors should be zero', function(done) {
+    var a = [5,5];
+    var b = [5,5];
+    assert.equal(euclideanDistance(a,b), 0);
+    done();
+  });
+  it('should calculate the euclidean distance between two vectors of size 2', function(done) {
+    var a = [5,5];
+    var b = [0,0];
+    assert.equal(euclideanDistance(a,b), 7.0710678118654755);
+    done();
   });
 });
