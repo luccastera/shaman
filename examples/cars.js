@@ -22,7 +22,6 @@ fs.readFile('./examples/cars.data', 'utf8', function(err, dataStr) {
     // We are only going two columns:
     //     x: horsepower
     //     y: price of car
-    var xAndY = cleanData.map(function(h) { return [h[21], h[25]]; });
     var x = cleanData.map(function(h) { return h[21]; }); // x is horsepower
     var y = cleanData.map(function(h) { return h[25]; }); // y is price
 

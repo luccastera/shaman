@@ -1,8 +1,9 @@
 /*globals describe, require */
 
 var LinearRegression = require('./index').LinearRegression,
-    assert = require('assert'),
     euclideanDistance = require('./index').euclideanDistance,
+    KMeans = require('./index').KMeans,
+    assert = require('assert'),
     sinon = require('sinon');
 
 var fixtures = {};
@@ -262,5 +263,50 @@ describe('Euclidean Distance', function() {
     var b = [0,0];
     assert.equal(euclideanDistance(a,b), 7.0710678118654755);
     done();
+  });
+});
+
+describe('k-means', function() {
+  describe('initialization', function() {
+    it('can be initialized with no parameters - K defaults to 3', function(done) {
+      var kmeans = new KMeans();
+      assert.ok(kmeans);
+      assert.equal(kmeans.K, 3);
+      done();
+    });
+    it('can be initialize with a value for K', function(done) {
+      var kmeans = new KMeans(5);
+      assert.ok(kmeans);
+      assert.equal(kmeans.K, 5);
+      done();
+    });
+  });
+
+  describe('cluster', function() {
+    it('should error if no data is passed', function(done) {
+      var kmeans = new KMeans();
+      kmeans.cluster(null, function(err, clusters) {
+        assert.ok(err);
+        assert.equal(err.message, 'data is required.');
+        done();
+      });
+    });
+    it('should error if data is not an array', function(done) {
+      var kmeans = new KMeans();
+      kmeans.cluster({}, function(err, clusters) {
+        assert.ok(err);
+        assert.equal(err.message, 'data must be an array.');
+        done();
+      });
+    });
+    it('should return an array of clusters', function(done) {
+      var kmeans = new KMeans();
+      kmeans.cluster([], function(err, clusters) {
+        assert.ok(!err);
+        assert.ok(clusters);
+        assert.ok(Array.isArray(clusters));
+        done();
+      });
+    });
   });
 });
