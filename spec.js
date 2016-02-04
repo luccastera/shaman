@@ -377,7 +377,7 @@ describe('k-means', function() {
         assert.ok(!err);
         assert.ok(clusters.length === 2);
         assert.ok(_.contains(clusters.map(function(c) { return c.join(','); }), [[200,200,200]].map(function(c) { return c.join(','); }).join(',')));
-        assert.ok(_.contains(clusters.map(function(c) { return c.join(','); }), [[1, 1, 1],[ 2, 2, 2],[3, 3, 3],[4, 4, 4],[5, 5, 5],[20, 20, 20]].map(function(c) { return c.join(','); }).join(',')));
+        assert.ok(_.contains(clusters.map(function(c) { return c.map(function(i) { return i.map(function(j) { return Math.floor(j);}); }).join(','); }), [[1, 1, 1],[ 2, 2, 2],[3, 3, 3],[4, 4, 4],[5, 5, 5],[20, 20, 20]].map(function(c) { return c.join(','); }).join(',')));
         done();
       });
     });
