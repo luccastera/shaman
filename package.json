@@ -6,7 +6,10 @@
     "machine learning",
     "linear regression",
     "statistics",
-    "gradient descent algorithm"
+    "gradient descent algorithm",
+    "clustering",
+    "k-means",
+    "kmeans"
   ],
   "homepage": "https://github.com/luccastera/shaman",
   "author": {
