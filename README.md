@@ -117,6 +117,35 @@ cigarettes from nicotine and tar content. Code can be seen at
 
 ![Cigarettes Example](examples/cigarettes.png)
 
-### License
+## Clustering (k-means)
+
+shaman implements the k-means clustering algorithm.
+
+### Usage
+
+```javascript
+var KMeans = require('shaman').KMeans;
+
+var kmeans = new KMeans(K);
+
+kmeans.cluster(data, function(err, clusters, centroids) {
+  if (err) { throw err; }
+
+  console.log(clusters);
+});
+
+```
+
+### Example: clustering wines
+
+[Below](https://plot.ly/~luccastera/20/wine/) to see an example of
+clustering using the k-means algorithm on [the wine dataset from
+UCI](http://archive.ics.uci.edu/ml/datasets/Wine).
+
+The code is located at [examples/wine.js](examples/wine.js).
+
+![Wine Example](examples/wine.png)
+
+## License
 
 [MIT](LICENSE)
