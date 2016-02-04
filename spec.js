@@ -4,6 +4,7 @@ var LinearRegression = require('./index').LinearRegression,
     euclideanDistance = require('./index').euclideanDistance,
     KMeans = require('./index').KMeans,
     assert = require('assert'),
+    _ = require('underscore'),
     sinon = require('sinon');
 
 var fixtures = {};
@@ -282,6 +283,36 @@ describe('k-means', function() {
     });
   });
 
+  describe('mean', function() {
+    it('should error if no data points is passed', function(done) {
+      var kmeans = new KMeans();
+      assert.throws(function() {
+        var average = kmeans.mean();
+      }, Error);
+      done();
+    });
+    it('should return an empty array if passed an empty array as input', function(done) {
+      var kmeans = new KMeans();
+      var average = kmeans.mean([]);
+      assert.deepEqual(average, []);
+      done();
+    });
+    it('should return the mean data point', function(done) {
+      var kmeans = new KMeans();
+      var data = [[0,0], [1,1], [2,2]];
+      assert.deepEqual(kmeans.mean(data), [1,1]);
+      done();
+    });
+
+    it('should return the mean data point', function(done) {
+      var kmeans = new KMeans();
+      var data = [[0,0,1], [1,1,1], [2,2,5], [10,15,2], [5,8,4.5]];
+      assert.deepEqual(kmeans.mean(data), [3.6,5.2,2.7]);
+      done();
+    });
+
+  });
+
   describe('cluster', function() {
     it('should error if no data is passed', function(done) {
       var kmeans = new KMeans();
@@ -299,14 +330,80 @@ describe('k-means', function() {
         done();
       });
     });
+    it('should error if we do not have enough  data points (m < K)', function(done) {
+      var kmeans = new KMeans(3);
+      var data = [[1,1], [2,2]];
+      kmeans.cluster(data, function(err, clusters) {
+        assert.ok(err);
+        assert.equal(err.message, 'data must have at least K data points.');
+        done();
+      });
+    });
     it('should return an array of clusters', function(done) {
-      var kmeans = new KMeans();
-      kmeans.cluster([], function(err, clusters) {
+      var kmeans = new KMeans(3);
+      var data = [[1,1], [2,1], [4,5], [6,7]];
+      kmeans.cluster(data, function(err, clusters) {
         assert.ok(!err);
         assert.ok(clusters);
         assert.ok(Array.isArray(clusters));
         done();
       });
     });
+
+    it('should return an array of centroids of size K', function(done) {
+      var kmeans = new KMeans(3);
+      var data = [[1,1], [2,1], [4,5], [6,7]];
+      kmeans.cluster(data, function(err, clusters, centroids) {
+        assert.ok(!err);
+        assert.ok(centroids);
+        assert.ok(Array.isArray(centroids));
+        assert.equal(centroids.length, 3);
+        done();
+      });
+    });
+
+    it('should cluster correctly into 2 clusters', function(done) {
+      var kmeans = new KMeans(2);
+      var data = [
+        [1, 1, 1],
+        [2, 2, 2],
+        [3, 3, 3],
+        [4, 4, 4],
+        [5, 5, 5],
+        [20, 20, 20],
+        [200, 200, 200]
+      ];
+      kmeans.cluster(data, function(err, clusters) {
+        assert.ok(!err);
+        assert.ok(clusters.length === 2);
+        assert.ok(_.contains(clusters.map(function(c) { return c.join(','); }), [[200,200,200]].map(function(c) { return c.join(','); }).join(',')));
+        assert.ok(_.contains(clusters.map(function(c) { return c.join(','); }), [[1, 1, 1],[ 2, 2, 2],[3, 3, 3],[4, 4, 4],[5, 5, 5],[20, 20, 20]].map(function(c) { return c.join(','); }).join(',')));
+        done();
+      });
+    });
+
+    it('should cluster correctly into 3 clusters', function(done) {
+      var kmeans = new KMeans(3);
+      var data = [
+        [1, 1, 1],
+        [2, 2, 2],
+        [3, 3, 3],
+        [4, 4, 4],
+        [5, 5, 5],
+        [20, 20, 20],
+        [40, 40, 40],
+        [200, 200, 200]
+      ];
+      kmeans.cluster(data, function(err, clusters, centroids) {
+        assert.ok(!err);
+        assert.ok(clusters.length === 3);
+        assert.ok(_.contains(clusters.map(function(c) { return c.join(','); }), [[200,200,200]].map(function(c) { return c.join(','); }).join(',')));
+        assert.ok(_.contains(clusters.map(function(c) { return c.join(','); }), [[20,20,20], [40,40,40]].map(function(c) { return c.join(','); }).join(',')));
+        assert.ok(_.contains(clusters.map(function(c) { return c.join(','); }), [[1, 1, 1],[ 2, 2, 2],[3, 3, 3],[4, 4, 4],[5, 5, 5]].map(function(c) { return c.join(','); }).join(',')));
+        assert.ok(_.contains(centroids.map(function(c) { return c.join(','); }), '3,3,3'));
+        done();
+      });
+    });
+
   });
 });
