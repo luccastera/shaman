@@ -1,3 +1,9 @@
+0.3.2 / 2016-02-04
+==================
+
+  * Added normalization for k-means algorithm
+  * Added dow jones example
+
 0.3.0 / 2016-02-03
 ==================
 
