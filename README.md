@@ -128,7 +128,7 @@ var KMeans = require('shaman').KMeans;
 
 var kmeans = new KMeans(K);
 
-kmeans.cluster(data, function(err, clusters) {
+kmeans.cluster(data, function(err, clusters, centroids) {
   if (err) { throw err; }
 
   console.log(clusters);
