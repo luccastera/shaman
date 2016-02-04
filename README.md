@@ -126,6 +126,7 @@ shaman implements the k-means clustering algorithm.
 ```javascript
 var KMeans = require('shaman').KMeans;
 
+var K = 4;
 var kmeans = new KMeans(K);
 
 kmeans.cluster(data, function(err, clusters, centroids) {
